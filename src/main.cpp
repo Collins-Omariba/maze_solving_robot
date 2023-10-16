@@ -1,4 +1,4 @@
-//ESP LINE FOLLOWER CAR USING L293D MOTOR DRIVER*
+//ESP LINE FOLLOWER CAR USING L298N MOTOR DRIVER*
 #include <Arduino.h>
 
 int ENA = 12; // Enable for Motor A
@@ -49,17 +49,8 @@ void setup() {
   digitalWrite(ENA2, LOW);
   digitalWrite(ENB2, LOW);
 }
-
-void loop() {
-  int rightValue = analogRead(RIGHT);
-  int leftValue = analogRead(LEFT);
-  int centerValue = analogRead(CENTER);
-  int betweenValue = analogRead(BETWEEN);
-  int rightOfCenterValue = analogRead(RIGHT_OF_CENTER);
-  int leftOfCenterValue = analogRead(LEFT_OF_CENTER);
-
-  if (rightValue <= 35 && leftValue <= 35) {
-    // MOVE FORWARD
+void move_forward(){
+   // MOVE FORWARD
     analogWrite(ENA, 100);
     analogWrite(ENB, 100);
     analogWrite(ENA2, 100);
@@ -73,8 +64,10 @@ void loop() {
     digitalWrite(MOTOR_A4, HIGH);
     digitalWrite(MOTOR_B3, LOW);
     digitalWrite(MOTOR_B4, HIGH);
-  } else if (rightValue <= 35 && leftValue > 35) {
-    // MOVE RIGHT
+}
+
+void right_turn(){
+  // MOVE RIGHT
     analogWrite(ENA, 255);
     analogWrite(ENB, 255);
     analogWrite(ENA2, 255);
@@ -88,8 +81,9 @@ void loop() {
     digitalWrite(MOTOR_A4, LOW);
     digitalWrite(MOTOR_B3, HIGH);
     digitalWrite(MOTOR_B4, LOW);
-  } else if (rightValue > 35 && leftValue <= 35) {
-    // MOVE LEFT
+}
+void left_turn(){
+  // MOVE LEFT
     analogWrite(ENA, 255);
     analogWrite(ENB, 255);
     analogWrite(ENA2, 255);
@@ -103,6 +97,21 @@ void loop() {
     digitalWrite(MOTOR_A4, HIGH);
     digitalWrite(MOTOR_B3, LOW);
     digitalWrite(MOTOR_B4, HIGH);
+}
+void loop() {
+  int rightValue = analogRead(RIGHT);
+  int leftValue = analogRead(LEFT);
+  int centerValue = analogRead(CENTER);
+  int betweenValue = analogRead(BETWEEN);
+  int rightOfCenterValue = analogRead(RIGHT_OF_CENTER);
+  int leftOfCenterValue = analogRead(LEFT_OF_CENTER);
+
+  if (rightValue <= 35 && leftValue <= 35) {
+    move_forward();
+  } else if (rightValue <= 35 && leftValue > 35) {
+    right_turn();
+  } else if (rightValue > 35 && leftValue <= 35) {
+    left_turn();
   } else if (centerValue <= 35 || betweenValue <= 35 ||
              rightOfCenterValue <= 35 || leftOfCenterValue <= 35) {
     // ALIGN WITH CENTER, BETWEEN, RIGHT_OF_CENTER, OR LEFT_OF_CENTER SENSOR
@@ -115,8 +124,8 @@ void loop() {
       // If the center sensor detects the line, move left
       digitalWrite(MOTOR_A1, HIGH);
       digitalWrite(MOTOR_A2, LOW);
-      digitalWrite(MOTOR_B1, HIGH);
-      digitalWrite(MOTOR_B2, LOW);
+      digitalWrite(MOTOR_B1, LOW);
+      digitalWrite(MOTOR_B2, HIGH);
       digitalWrite(MOTOR_A3, HIGH);
       digitalWrite(MOTOR_A4, LOW);
       digitalWrite(MOTOR_B3, HIGH);
